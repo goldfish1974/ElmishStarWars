@@ -14,4 +14,10 @@ module State =
 
 module View =
     open Types
-    let view (model: Model) dispatch = ""
+    let root (model: Model) dispatch = 
+        View.ContentPage(
+            content = View.StackLayout(padding = 20.0, verticalOptions = LayoutOptions.Center,
+                children = [
+                        yield View.Label(text = "Application page", horizontalOptions = LayoutOptions.CenterAndExpand)
+                    ]
+            )).HasNavigationBar(true).HasBackButton(true)

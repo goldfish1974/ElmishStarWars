@@ -10,19 +10,27 @@ open Newtonsoft.Json
 open SWApi
 open Types
 open State
+open Global
 
 module App = 
 
     let view (model: Model) dispatch =
+
+        let root (page:Page) (pageModel:PageModel) =
+            match page, pageModel with
+            | ApplicationPage _ , ApplicationModel m -> Application.View.root m (ApplicationMsg >> dispatch)
+            | PeoplePage _, PeopleModel m -> People.View.root m (PeopleMsg >> dispatch)
+            | FilmPage _, FilmModel m -> Film.View.root m (FilmMsg >> dispatch)
+            | StarshipPage _, StarshipModel m -> Starship.View.root m (StarshipMsg >> dispatch)
+            | VehiclePage _, VehicleModel m -> Vehicle.View.root m (VehicleMsg >> dispatch)
+            | SpeciesPage _, SpeciesModel m -> Species.View.root m (SpeciesMsg >> dispatch)
+            | PlanetPage _, PlanetModel m -> Planet.View.root m (PlanetMsg >> dispatch)
+            | _, _ -> failwith "Wrong page model"
+
         View.NavigationPage(
           pages = 
             [
-                View.ContentPage(
-                    content = View.StackLayout(padding = 20.0, verticalOptions = LayoutOptions.Center,
-                        children = [
-                                yield View.Label(text = "Getting Started!!!", horizontalOptions = LayoutOptions.CenterAndExpand)
-                            ]
-                    )).HasNavigationBar(true).HasBackButton(true)
+                yield root model.CurrentPage model.PageModel
             ],
             barTextColor = Color.Blue
 
