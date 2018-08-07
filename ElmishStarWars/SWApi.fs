@@ -351,13 +351,3 @@ and [<CLIMutable>] Vehicle = {
 
 
 
-module Http =
-    open RestSharp
-    open Newtonsoft.Json
-
-    let getData<'a> (url:string)=
-        async {
-            let client = new RestClient(url)
-            let req = RestRequest(Method.GET)
-            return! Async.Catch (client.ExecuteGetTaskAsync<'a>(req) |> Async.AwaitTask)
-        } 

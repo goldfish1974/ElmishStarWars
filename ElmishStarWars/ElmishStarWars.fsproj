@@ -7,6 +7,17 @@
 
   <ItemGroup>
     <Compile Include="SWApi.fs" />
+    <Compile Include="Helpers.fs" />
+    <Compile Include="Global.fs" />
+    <Compile Include="Application.fs" />
+    <Compile Include="People.fs" />
+    <Compile Include="Film.fs" />
+    <Compile Include="Starship.fs" />
+    <Compile Include="Vehicle.fs" />
+    <Compile Include="Species.fs" />
+    <Compile Include="Planet.fs" />
+    <Compile Include="Types.fs" />
+    <Compile Include="State.fs" />
     <Compile Include="ElmishStarWars.fs" />
   </ItemGroup>
   <ItemGroup>

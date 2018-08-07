@@ -126,6 +126,9 @@
     <Reference Include="RestSharp">
       <HintPath>..\packages\RestSharp.106.3.1\lib\netstandard2.0\RestSharp.dll</HintPath>
     </Reference>
+    <Reference Include="Elmish.XamarinForms.LiveUpdate">
+      <HintPath>..\packages\Elmish.XamarinForms.LiveUpdate.0.15.2\lib\netstandard2.0\Elmish.XamarinForms.LiveUpdate.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.FSharp.targets" Condition="Exists('$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.FSharp.targets')" />
   <ItemGroup>

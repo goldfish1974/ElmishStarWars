@@ -8,40 +8,25 @@ open Xamarin.Forms
 open RestSharp
 open Newtonsoft.Json
 open SWApi
+open Types
+open State
 
 module App = 
 
-
-    type Model = 
-      { Result : string }
-
-    type Msg = 
-        | Reset
-        | Fetched of string
-        | FetchError of exn
-
-
-
-    let initModel = { Result = "Some star wars data" }
-
-    let init () = 
-        initModel, Cmd.none
-
-
-    let update msg model =
-        match msg with
-        | Reset -> init ()
-        | Fetched s -> {model with Result = s}, Cmd.none
-        | FetchError exn -> model, Cmd.none
-
-
     let view (model: Model) dispatch =
-        View.ContentPage(
-          content = View.StackLayout(padding = 20.0, verticalOptions = LayoutOptions.Center,
-            children = [
-                View.Label(text = model.Result, horizontalOptions = LayoutOptions.Center)
-                View.Button(text = "Reset", horizontalOptions = LayoutOptions.Center, command = (fun () -> dispatch Reset))
-            ]))
+        View.NavigationPage(
+          pages = 
+            [
+                View.ContentPage(
+                    content = View.StackLayout(padding = 20.0, verticalOptions = LayoutOptions.Center,
+                        children = [
+                                yield View.Label(text = "Getting Started!!!", horizontalOptions = LayoutOptions.CenterAndExpand)
+                            ]
+                    )).HasNavigationBar(true).HasBackButton(true)
+            ],
+            barTextColor = Color.Blue
+
+        )
 
     // Note, this declaration is needed if you enable LiveUpdate
     let program = Program.mkProgram init update view
@@ -60,7 +45,7 @@ type App () as app =
     // Uncomment this line to enable live update in debug mode. 
     // See https://fsprojects.github.io/Elmish.XamarinForms/tools.html for further  instructions.
     //
-    //do runner.EnableLiveUpdate()
+    do runner.EnableLiveUpdate()
 #endif    
 
     // Uncomment this code to save the application state to app.Properties using Newtonsoft.Json
