@@ -22,6 +22,15 @@ type Root = {
 } 
 
 [<CLIMutable>]
+type Resp<'a> = {
+    Count : int
+    Next : string
+    Previous : string
+    Results : 'a []
+}
+
+
+[<CLIMutable>]
 type People = {
     (**
     * An array of urls of film resources that this person has been in.
@@ -280,7 +289,7 @@ and [<CLIMutable>] Species = {
     (**
     * The name of this species.
     *)
-    name: string
+    Name: string
 }
 and [<CLIMutable>] Vehicle = {
     (**
@@ -349,5 +358,58 @@ and [<CLIMutable>] Vehicle = {
     Name: string
 }
 
-
+and [<CLIMutable>] Planet = {
+    (**
+    * An array of People URL Resources that live on this planet.
+    *)
+    Residents: string[];
+    (**
+    * The diameter of this planet in kilometers.
+    *)
+    Diameter: string;
+    (**
+    * The hypermedia URL of this resource.
+    *)
+    Url: string;
+    (**
+    * The name of this planet.
+    *)
+    Name: string;
+    (**
+    * The average populationof sentient beings inhabiting this planet.
+    *)
+    Population: string;
+    (**
+    * The percentage of the planet surface that is naturally occuring water or bodies of water.
+    *)
+    Surface_Water: string;
+    (**
+    * The ISO 8601 date format of the time that this resource was created.
+    *)
+    Created: string;
+    (**
+    * the terrain of this planet. Comma-seperated if diverse.
+    *)
+    Terrain: string;
+    (**
+    * A number denoting the gravity of this planet. Where 1 is normal.
+    *)
+    Gravity: string;
+    (**
+    * The climate of this planet. Comma-seperated if diverse.
+    *)
+    Climate: string;
+    (**
+    * The number of standard days it takes for this planet to complete a single orbit of its local star.
+    *)
+    Orbital_Period: string;
+    (**
+    * An array of Film URL Resources that this planet has appeared in.
+    *)
+    Films: string[];
+    (**
+    * The number of standard hours it takes for this planet to complete a single rotation on its axis.
+    *)
+    Rotation_Period: string;
+}
 
