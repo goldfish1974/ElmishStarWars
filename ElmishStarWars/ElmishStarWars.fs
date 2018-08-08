@@ -17,6 +17,7 @@ module App =
     let view (model: Model) dispatch =
 
         let root (page:Page) (pageModel:PageModel) =
+            //Xamarin.Forms.Application.Current.MainPage.DisplayAlert("Clicked", sprintf "%A You clicked the button" page, "OK") |> ignore
             match page, pageModel with
             | ApplicationPage _ , ApplicationModel m -> Application.View.root m (ApplicationMsg >> dispatch)
             | PeoplePage _, PeopleModel m -> People.View.root m (PeopleMsg >> dispatch)
@@ -30,11 +31,15 @@ module App =
         View.NavigationPage(
           pages = 
             [
-                yield root model.CurrentPage model.PageModel
+                for p in List.rev model.PageStack do
+                    let (page,m) = p
+                    yield root page m
             ],
+            popped=(fun args -> dispatch PagePopped),
             barTextColor = Color.Blue
 
         )
+        //root model.CurrentPage model.PageModel
 
     // Note, this declaration is needed if you enable LiveUpdate
     let program = Program.mkProgram init update view

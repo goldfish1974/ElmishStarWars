@@ -9,6 +9,7 @@ type Msg =
     | VehicleMsg of Vehicle.Types.Msg
     | SpeciesMsg of Species.Types.Msg
     | PlanetMsg of Planet.Types.Msg
+    | PagePopped
 
 
 type PageModel =
@@ -22,6 +23,6 @@ type PageModel =
 
 
 type Model = {
-        CurrentPage : Page
-        PageModel : PageModel
+        PageStack : (Page * PageModel) list
+        //PageModel : PageModel
     }

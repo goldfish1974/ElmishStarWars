@@ -7,6 +7,7 @@
 
     let getData (url:string)=
         async {
+            do! Async.SwitchToThreadPool()
             let client = new RestClient(url)
             let req = RestRequest(Method.GET)
             return! Async.Catch (client.ExecuteTaskAsync (req) |> Async.AwaitTask)
