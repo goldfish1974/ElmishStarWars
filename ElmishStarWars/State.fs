@@ -23,24 +23,42 @@ let update (msg : Msg) (model : Model) =
     match msg, pageModel with
     | ApplicationMsg msg , ApplicationModel m ->
         match msg with
-        | Application.Types.SelectedPeople p ->
-            let (a,aCmd) = People.State.init(p)
-            {model with PageStack = (PeoplePage,PeopleModel a) :: model.PageStack ; }, Cmd.map PeopleMsg aCmd
-        | Application.Types.SelectedFilm p ->
-            let (a,aCmd) = Film.State.init(p)
-            {model with PageStack = (FilmPage,FilmModel a) :: model.PageStack ; }, Cmd.map PeopleMsg aCmd
-        | Application.Types.SelectedStarship p ->
-            let (a,aCmd) = Starship.State.init(p)
-            {model with PageStack = (StarshipPage,StarshipModel a) :: model.PageStack ; }, Cmd.map PeopleMsg aCmd
-        | Application.Types.SelectedVehicle p ->
-            let (a,aCmd) = Vehicle.State.init(p)
-            {model with PageStack = (VehiclePage,VehicleModel a) :: model.PageStack ; }, Cmd.map PeopleMsg aCmd
-        | Application.Types.SelectedSpecies p ->
-            let (a,aCmd) = Species.State.init(p)
-            {model with PageStack = (SpeciesPage,SpeciesModel a) :: model.PageStack ; }, Cmd.map PeopleMsg aCmd
-        | Application.Types.SelectedPlanet p ->
-            let (a,aCmd) = Planet.State.init(p)
-            {model with PageStack = (PlanetPage,PlanetModel a) :: model.PageStack ; }, Cmd.map PeopleMsg aCmd
+        //| Application.Types.PeopleListMsg p ->
+            //match p with
+            //| PeopleList.Types.Msg.SelectedPeople i -> 
+                //let (a,aCmd) = People.State.init(i)
+                //{model with PageStack = (PeoplePage,PeopleModel a) :: model.PageStack }, Cmd.map PeopleMsg aCmd
+            //| _ -> model, Cmd.none
+        //| Application.Types.FilmListMsg p ->
+        //    match p with
+        //    | FilmList.Types.Msg.SelectedFilm i ->
+        //        let (a,aCmd) = Film.State.init(i)
+        //        {model with PageStack = (FilmPage,FilmModel a) :: model.PageStack ; }, Cmd.map PeopleMsg aCmd
+        //    | _ -> model, Cmd.none
+        //| Application.Types.StarshipListMsg p ->
+        //    match p with
+        //    | StarshipList.Types.Msg.SelectedStarship i ->
+        //        let (a,aCmd) = Starship.State.init(i)
+        //        {model with PageStack = (StarshipPage,StarshipModel a) :: model.PageStack ; }, Cmd.map PeopleMsg aCmd
+        //    | _ -> model, Cmd.none
+        //| Application.Types.VehicleListMsg p ->
+        //    match p with 
+        //    | VehicleList.Types.Msg.SelectedVehicle i ->
+        //        let (a,aCmd) = Vehicle.State.init(i)
+        //        {model with PageStack = (VehiclePage,VehicleModel a) :: model.PageStack ; }, Cmd.map PeopleMsg aCmd
+        //    | _ -> model, Cmd.none
+        //| Application.Types.SpeciesListMsg p ->
+        //    match p with 
+        //    | SpeciesList.Types.Msg.SelectedSpecies i ->
+        //        let (a,aCmd) = Species.State.init(i)
+        //        {model with PageStack = (SpeciesPage,SpeciesModel a) :: model.PageStack ; }, Cmd.map PeopleMsg aCmd
+        //    | _ -> model, Cmd.none
+        //| Application.Types.PlanetListMsg p ->
+            //match p with
+            //| PlanetList.Types.Msg.SelectedPlanet i ->
+            //    let (a,aCmd) = Planet.State.init(i)
+            //    {model with PageStack = (PlanetPage,PlanetModel a) :: model.PageStack ; }, Cmd.map PeopleMsg aCmd
+            //| _ -> model, Cmd.none
         | _ ->
             let (a, aCmd) = Application.State.update msg m
             let i = (ApplicationPage, ApplicationModel a) :: removeFirst model.PageStack

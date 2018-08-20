@@ -6,9 +6,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="4.5.0" /> <!-- workaround for VSMac bug https://github.com/mono/monodevelop/pull/5137 --> 
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Components\" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="SWApi.fs" />
     <Compile Include="Helpers.fs" />
     <Compile Include="Global.fs" />
+    <Compile Include="Components\CommonViews.fs" />
+    <Compile Include="Components\PeopleList.fs" />
+    <Compile Include="Components\FilmList.fs" />
+    <Compile Include="Components\StarshipList.fs" />
+    <Compile Include="Components\VehicleList.fs" />
+    <Compile Include="Components\SpeciesList.fs" />
+    <Compile Include="Components\PlanetList.fs" />
     <Compile Include="Application.fs" />
     <Compile Include="People.fs" />
     <Compile Include="Film.fs" />
@@ -19,15 +32,12 @@
     <Compile Include="Types.fs" />
     <Compile Include="State.fs" />
     <Compile Include="ElmishStarWars.fs" />
-  </ItemGroup>
-  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="Xamarin.Forms" Version="3.0.0.482510" />
     <PackageReference Include="Xamarin.Essentials" Version="0.6.0-preview" />
     <PackageReference Include="Elmish.XamarinForms" Version="0.15.2" />
     <PackageReference Include="Elmish.XamarinForms.LiveUpdate" Version="0.15.2" />
     <PackageReference Include="FSharp.Core" Version="4.5.0" />
-    <PackageReference Update="FSharp.Core" Version="4.5.0" /> <!-- workaround for VSMac bug https://github.com/mono/monodevelop/pull/5137 --> 
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="RestSharp" Version="106.3.1" />
   </ItemGroup>
 </Project>

@@ -5,39 +5,45 @@ open Xamarin.Forms
 open SWApi
 open Helpers
 open System
+open Newtonsoft.Json
 
 module Types = 
     type Msg = 
         | FetchRoot of Root
-        | FetchList
+        | LoadPeople
         | FetchPeople of Resp<People>
+        | LoadFilms
         | FetchFilm of Resp<Film>
+        | LoadStarships
         | FetchStarship of Resp<Starship>
+        | LoadVehicles
         | FetchVehicle of Resp<Vehicle>
+        | LoadSpecies
         | FetchSpecies of Resp<Species>
+        | LoadPlanets
         | FetchPlanet of Resp<Planet>
         | FetchError of exn
-        | PeopleSelectedItemChanged of int option
-        | FilmSelectedItemChanged of int option
-        | StarshipSelectedItemChanged of int option
-        | VehicleSelectedItemChanged of int option 
-        | SpeciesSelectedItemChanged of int option 
-        | PlanetSelectedItemChanged of int option
-        | SelectedPeople of People
-        | SelectedFilm of Film
-        | SelectedStarship of Starship
-        | SelectedVehicle of Vehicle
-        | SelectedSpecies of Species
-        | SelectedPlanet of Planet
+        | PeopleListMsg of PeopleList.Types.Msg
+        | FilmListMsg of FilmList.Types.Msg
+        | StarshipListMsg of StarshipList.Types.Msg
+        | VehicleListMsg of VehicleList.Types.Msg
+        | SpeciesListMsg of SpeciesList.Types.Msg
+        | PlanetListMsg of PlanetList.Types.Msg
 
     type Model = {
         Root : Root option
-        People : People []
-        Films : Film  []
-        Starships : Starship []
-        Vehicles : Vehicle []
-        Specieses : Species []
-        Planets : Planet []
+        PeopleRes : Resp<People> option
+        People : PeopleList.Types.Model
+        FilmRes : Resp<Film> option
+        Films : FilmList.Types.Model
+        StarshipRes : Resp<Starship> option
+        Starships : StarshipList.Types.Model
+        VehicleRes : Resp<Vehicle> option
+        Vehicles : VehicleList.Types.Model
+        SpeciesRes : Resp<Species> option
+        Specieses : SpeciesList.Types.Model
+        PlanetRes : Resp<Planet> option
+        Planets : PlanetList.Types.Model
     }
 
 module State =
@@ -47,228 +53,163 @@ module State =
         let resCmd = getCmd (getData rootUrl) FetchRoot FetchError
         {
             Root = None
+            PeopleRes = None
             People = [||]
+            FilmRes = None
             Films = [||]
+            StarshipRes = None
             Starships = [||]
+            VehicleRes = None
             Vehicles = [||]
+            SpeciesRes = None
             Specieses = [||]
+            PlanetRes = None
             Planets = [||]
         }, resCmd
 
+    let fetchDataFromResp baseUrl (r : Resp<'a> option) success error= 
+        let fetchDataIfPossible r success error = 
+            if (String.IsNullOrEmpty r.Next) then //No next so don't do anything
+                Cmd.none
+            else getCmd (getData r.Next) success error //Pull the next data
 
-    let loopedReq url fetchItems error =
-        if (String.IsNullOrEmpty url) 
-        then 
-            Cmd.none 
-        else
-            getCmd (getData url) fetchItems error
+        match r with 
+        | None -> 
+            getCmd (getData baseUrl) success error // we don't have object so pull it from root
+        | Some r ->
+            fetchDataIfPossible r success error
 
     let update msg model = 
         match msg with 
-        | FetchRoot r -> {model with Root = Some r}, Cmd.ofMsg FetchList
-        | FetchList -> 
-            let peopleCmd = getCmd (getData model.Root.Value.People) FetchPeople FetchError
-            let filmCmd = getCmd (getData model.Root.Value.Films) FetchFilm FetchError
-            let starshipCmd = getCmd (getData model.Root.Value.Starships) FetchStarship FetchError
-            let vehicleCmd = getCmd (getData model.Root.Value.Vehicles) FetchVehicle FetchError
-            let speciesCmd = getCmd (getData model.Root.Value.Species) FetchSpecies FetchError
-            let planetCmd = getCmd (getData model.Root.Value.Planets) FetchPlanet FetchError
-            model, Cmd.batch [
-                peopleCmd
-                filmCmd
-                starshipCmd
-                vehicleCmd
-                speciesCmd
-                planetCmd
-            ]
+        | FetchRoot r -> {model with Root = Some r}, Cmd.none
+        | LoadPeople -> 
+            model, fetchDataFromResp model.Root.Value.People model.PeopleRes FetchPeople FetchError
         | FetchPeople r -> 
-            let pCmd = loopedReq r.Next FetchPeople FetchError
-            let p = model.People |> Array.append r.Results
-            {model with People = p}, Cmd.none //pCmd
-        | FetchFilm r -> 
-            let fCmd = loopedReq r.Next FetchFilm FetchError
-            let f = model.Films |> Array.append r.Results
-            {model with Films = f}, Cmd.none //fCmd
+            let (a,aCmd) = PeopleList.State.init r.Results
+            {model with People = Array.append model.People a; PeopleRes = Some r}, Cmd.map PeopleListMsg aCmd
+        | LoadFilms ->
+            model, fetchDataFromResp model.Root.Value.Films model.FilmRes FetchFilm FetchError
+        | FetchFilm r ->
+            let (a,aCmd) = FilmList.State.init r.Results
+            {model with Films = Array.append model.Films a; FilmRes = Some r}, Cmd.map FilmListMsg aCmd
+        | LoadStarships ->
+            model, fetchDataFromResp model.Root.Value.Starships model.StarshipRes FetchStarship FetchError
         | FetchStarship r -> 
-            let sCmd = loopedReq r.Next FetchStarship FetchError
-            let s = model.Starships |> Array.append r.Results
-            {model with Starships = s}, Cmd.none //sCmd
+            let (a,aCmd) = StarshipList.State.init r.Results
+            {model with Starships = Array.append model.Starships a; StarshipRes = Some r}, Cmd.map StarshipListMsg aCmd
+        | LoadVehicles ->
+            model, fetchDataFromResp model.Root.Value.Vehicles model.VehicleRes FetchVehicle FetchError
         | FetchVehicle r -> 
-            let vCmd = loopedReq r.Next FetchVehicle FetchError
-            let v = model.Vehicles |> Array.append r.Results
-            {model with Vehicles = v}, Cmd.none //vCmd
+            let (a,aCmd) = VehicleList.State.init r.Results
+            {model with Vehicles = Array.append model.Vehicles a; VehicleRes = Some r}, Cmd.map VehicleListMsg aCmd
+        | LoadSpecies ->
+            model, fetchDataFromResp model.Root.Value.Species model.SpeciesRes FetchSpecies FetchError
         | FetchSpecies r -> 
-            let sCmd = loopedReq r.Next FetchSpecies FetchError
-            let s = model.Specieses |> Array.append r.Results
-            {model with Specieses = s}, Cmd.none //sCmd
+            let (a,aCmd) = SpeciesList.State.init r.Results
+            {model with Specieses = Array.append model.Specieses a; SpeciesRes = Some r}, Cmd.map SpeciesListMsg aCmd
+        | LoadPlanets ->
+            model, fetchDataFromResp model.Root.Value.Planets model.PlanetRes FetchPlanet FetchError
         | FetchPlanet r -> 
-            let pCmd = loopedReq r.Next FetchPlanet FetchError
-            let p = model.Planets |> Array.append r.Results
-            {model with Planets = p}, Cmd.none //pCmd
+            let (a,aCmd) = PlanetList.State.init r.Results
+            {model with Planets = Array.append model.Planets a; PlanetRes = Some r}, Cmd.map PlanetListMsg aCmd
         | FetchError exn -> model, Cmd.none
-        | PeopleSelectedItemChanged idx -> model, Cmd.ofMsg (SelectedPeople model.People.[idx.Value])
-        | FilmSelectedItemChanged idx -> model, Cmd.ofMsg (SelectedFilm model.Films.[idx.Value])
-        | StarshipSelectedItemChanged idx -> model, Cmd.ofMsg (SelectedStarship model.Starships.[idx.Value])
-        | VehicleSelectedItemChanged idx -> model, Cmd.ofMsg (SelectedVehicle model.Vehicles.[idx.Value])
-        | SpeciesSelectedItemChanged idx -> model, Cmd.ofMsg (SelectedSpecies model.Specieses.[idx.Value])
-        | PlanetSelectedItemChanged idx -> model, Cmd.ofMsg (SelectedPlanet model.Planets.[idx.Value])
-        | SelectedPeople a -> model, Cmd.none
-        | SelectedFilm a -> model, Cmd.none
-        | SelectedStarship a -> model, Cmd.none
-        | SelectedVehicle a -> model, Cmd.none
-        | SelectedSpecies a -> model, Cmd.none
-        | SelectedPlanet a -> model, Cmd.none
+        | PeopleListMsg msg -> 
+            let (a,aCmd) = PeopleList.State.update msg model.People
+            model, Cmd.map PeopleListMsg aCmd
+        | FilmListMsg msg ->
+            let (a,aCmd) = FilmList.State.update msg model.Films
+            model, Cmd.map FilmListMsg aCmd
+        | StarshipListMsg msg ->
+            let (a,aCmd) = StarshipList.State.update msg model.Starships
+            model, Cmd.map StarshipListMsg aCmd
+        | VehicleListMsg msg ->
+            let (a,aCmd) = VehicleList.State.update msg model.Vehicles
+            model, Cmd.map VehicleListMsg aCmd
+        | SpeciesListMsg msg ->
+            let (a,aCmd) = SpeciesList.State.update msg model.Specieses
+            model, Cmd.map SpeciesListMsg aCmd
+        | PlanetListMsg msg ->
+            let (a,aCmd) = PlanetList.State.update msg model.Planets
+            model, Cmd.map PlanetListMsg aCmd
 
 module View =
     open Types
+    open CommonViews
 
-    let loadingView =
-        View.ContentView(
-            content = View.Label (text = "Loading", horizontalOptions = LayoutOptions.CenterAndExpand)
-        )
-
-    let people model dispatch = 
-        View.ContentPage(
-            title = "People",
-            content =
-                View.ScrollView(
-                    content = View.StackLayout (
-                        padding = 20.0,
-                        children = [
-                            if model.People.Length > 0 then
-                                yield View.Label(text = sprintf "no of people : %A" model.People.Length)
-                                yield View.ListView(
-                                    items = [ 
-                                       for i in model.People do 
-                                           yield View.Label i.Name
-                                           ],
-                                    itemSelected=(fun idx -> dispatch (PeopleSelectedItemChanged idx)),
-                                    horizontalOptions=LayoutOptions.CenterAndExpand)
-                            else yield loadingView
-                        ]
-                    )
-                )
-        )
-
-    let film model dispatch = 
-        View.ContentPage(
-            title = "Film",
-            content = View.ScrollView(
-                content = View.StackLayout (
-                    padding = 20.0,
-                    children = [
-                        if model.Films.Length > 0 then
-                            yield View.Label(text = sprintf "no of films : %A" model.Films.Length)
-                            yield View.ListView(
-                               items = [ 
-                                   for i in model.Films do 
-                                       yield View.Label i.Title
-                                       ],
-                                itemSelected=(fun idx -> dispatch (FilmSelectedItemChanged idx)),
-                                horizontalOptions=LayoutOptions.CenterAndExpand)
-                        else yield loadingView
-                    ]
-                )
-            )
-        )
-
-    let starship model dispatch = 
-        View.ContentPage(
-            title = "Starship",
-            content = View.ScrollView(
-                content = View.StackLayout (
-                    padding = 20.0,
-                    children = [
-                        if model.Starships.Length > 0 then
-                            yield View.Label(text = sprintf "no of starships : %A" model.Starships.Length)
-                            yield View.ListView(
-                               items = [ 
-                                   for i in model.Starships do 
-                                       yield View.Label i.Name
-                                       ],
-                                itemSelected=(fun idx -> dispatch (StarshipSelectedItemChanged idx)),
-                                horizontalOptions=LayoutOptions.CenterAndExpand)
-                        else yield loadingView
-                    ]
-                )
-            )
-        )
-
-    let vehicle model dispatch = 
-        View.ContentPage(
-            title = "Vehicle",
-            content = View.ScrollView(
-                content = View.StackLayout (
-                    padding = 20.0,
-                    children = [
-                        if model.Vehicles.Length > 0 then
-                            yield View.Label(text = sprintf "no of vehicles : %A" model.Vehicles.Length)
-                            yield View.ListView(
-                               items = [ 
-                                   for i in model.Vehicles do 
-                                       yield View.Label i.Name
-                                       ],
-                                itemSelected=(fun idx -> dispatch (VehicleSelectedItemChanged idx)),
-                                horizontalOptions=LayoutOptions.CenterAndExpand)
-                        else yield loadingView
-                    ]
-                )
-            )
-        )
-
-    let species model dispatch = 
-        View.ContentPage(
-            title = "Species",
-            content = View.ScrollView(
-                content = View.StackLayout (
-                    padding = 20.0,
-                    children = [
-                        if model.Specieses.Length > 0 then
-                            yield View.Label(text = sprintf "no of species : %A" model.Specieses.Length)
-                            yield View.ListView(
-                               items = [ 
-                                   for i in model.Specieses do 
-                                       yield View.Label i.Name
-                                       ],
-                                itemSelected=(fun idx -> dispatch (SpeciesSelectedItemChanged idx)),
-                                horizontalOptions=LayoutOptions.CenterAndExpand)
-                        else yield loadingView
-                    ]
-                )
-            )
-        )
-
-    let planet model dispatch = 
-        View.ContentPage(
-            title = "Planet",
-            content = View.ScrollView(
-                content = View.StackLayout (
-                    padding = 20.0,
-                    children = [
-                        if model.Planets.Length > 0 then
-                            yield View.Label(text = sprintf "no of planets : %A" model.Planets.Length)
-                            yield View.ListView(
-                               items = [ 
-                                   for i in model.Planets do 
-                                       yield View.Label i.Name
-                                       ],
-                                itemSelected=(fun idx -> dispatch (PlanetSelectedItemChanged idx)),
-                                horizontalOptions=LayoutOptions.CenterAndExpand)
-                        else yield loadingView
-                    ]
-                )
-            )
-        )
 
     let root (model: Model) dispatch = 
         View.TabbedPage(
                 useSafeArea = true,
                 children = [
-                    yield people model dispatch
-                    yield film model dispatch
-                    yield starship model dispatch
-                    yield vehicle model dispatch
-                    yield species model dispatch
-                    yield planet model dispatch
+                    yield 
+                        View.ContentPage(
+                            title = "People",
+                            content = 
+                                View.StackLayout(
+                                    children = [
+                                        PeopleList.View.root model.People (PeopleListMsg >> dispatch)
+                                        View.Button(text = "Fetch People",command = (fun _ -> LoadPeople |> dispatch))
+                                    ]
+                                )
+                            )
+                    yield
+                        View.ContentPage(
+                            title = "Film",
+                            content =
+                                View.StackLayout(
+                                    children = [
+                                        FilmList.View.root model.Films (FilmListMsg >> dispatch)
+                                        View.Button(text = "Fetch Films",command = (fun _ -> LoadFilms |> dispatch))
+                                    ]
+                                )
+                            )
+                    yield
+                        View.ContentPage(
+                            title = "Starship",
+                            content = 
+                                View.StackLayout(
+                                    children = [
+                                        StarshipList.View.root model.Starships (StarshipListMsg >> dispatch)
+                                        View.Button(text = "Fetch Starships",command = (fun _ -> LoadStarships |> dispatch))
+                                    ]
+                                )
+                            )
+
+                    yield
+                        View.ContentPage(
+                            title = "Vehicle",
+                            content = 
+                                View.StackLayout(
+                                    children = [
+                                        VehicleList.View.root model.Vehicles (VehicleListMsg >> dispatch)
+                                        View.Button(text = "Fetch Vehicles",command = (fun _ -> LoadVehicles |> dispatch))
+                                    ]
+                                )
+                            )
+
+                    yield
+                        View.ContentPage(
+                            title = "Species",
+                            content = 
+                                View.StackLayout(
+                                    children = [
+                                        SpeciesList.View.root model.Specieses (SpeciesListMsg >> dispatch)
+                                        View.Button(text = "Fetch Species",command = (fun _ -> LoadSpecies |> dispatch))
+                                    ]
+                                )
+                            )
+
+                    yield
+                        View.ContentPage(
+                            title = "Planet",
+                            content = 
+                                View.StackLayout(
+                                    children = [
+                                        PlanetList.View.root model.Planets (PlanetListMsg >> dispatch)
+                                        View.Button(text = "Fetch Planes",command = (fun _ -> LoadPlanets |> dispatch))
+                                    ]
+                                )
+                            )
+
                 ]
             ).HasNavigationBar(true).HasBackButton(true)
