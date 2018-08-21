@@ -47,4 +47,4 @@ module View =
                         FilmList.View.root model.Films (FilmListMsg >> dispatch)
                     ]
                 )
-            )
+            ).HasNavigationBar(true).HasBackButton(true)

@@ -2,10 +2,13 @@
 
 type Page = 
     | ApplicationPage 
-    | PeoplePage
+    | PersonPage
     | FilmPage
     | StarshipPage
     | VehiclePage
     | SpeciesPage
     | PlanetPage
     | FilmsPage
+    | SpeciesMorePage
+    | VehiclesPage
+    | StarshipsPage

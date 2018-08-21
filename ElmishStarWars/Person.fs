@@ -5,7 +5,11 @@ open Xamarin.Forms
 open SWApi
 
 module Types = 
-    type Msg = | ShowFilms of string []
+    type Msg = 
+        | ShowFilms of string []
+        | ShowSpecies of string []
+        | ShowVehicles of string []
+        | ShowStarships of string []
     type Model = People
 
 module State =
@@ -13,11 +17,7 @@ module State =
     let init (p : People) = 
         p, Cmd.none
 
-    let update msg model = 
-        match msg with 
-        | ShowFilms filmLinks->
-            //Pull the data for films
-            model, Cmd.none
+    let update msg model = model, Cmd.none //As all the messages are manage from parent.
 
 module View =
     open Types
@@ -30,5 +30,8 @@ module View =
                         yield View.Label(text = model.Gender, horizontalOptions = LayoutOptions.CenterAndExpand)
                         yield View.Label(text = model.Hair_Color, horizontalOptions = LayoutOptions.CenterAndExpand)
                         yield View.Button(text = "Show Films", command = (fun _ -> ShowFilms model.Films |> dispatch))
+                        yield View.Button(text = "Show Species", command = (fun _ -> ShowSpecies model.Species |> dispatch))
+                        yield View.Button(text = "Show Vehicles", command = (fun _ -> ShowVehicles model.Vehicles |> dispatch))
+                        yield View.Button(text = "Show StarShips", command = (fun _ -> ShowStarships model.Starships |> dispatch))
                     ]
             )).HasNavigationBar(true).HasBackButton(true)

@@ -41,7 +41,7 @@ module Types =
         VehicleRes : Resp<Vehicle> option
         Vehicles : VehicleList.Types.Model
         SpeciesRes : Resp<Species> option
-        Specieses : SpeciesList.Types.Model
+        Species : SpeciesList.Types.Model
         PlanetRes : Resp<Planet> option
         Planets : PlanetList.Types.Model
     }
@@ -62,7 +62,7 @@ module State =
             VehicleRes = None
             Vehicles = [||]
             SpeciesRes = None
-            Specieses = [||]
+            Species = [||]
             PlanetRes = None
             Planets = [||]
         }, resCmd
@@ -106,7 +106,7 @@ module State =
             model, fetchDataFromResp model.Root.Value.Species model.SpeciesRes FetchSpecies FetchError
         | FetchSpecies r -> 
             let (a,aCmd) = SpeciesList.State.init r.Results
-            {model with Specieses = Array.append model.Specieses a; SpeciesRes = Some r}, Cmd.map SpeciesListMsg aCmd
+            {model with Species = Array.append model.Species a; SpeciesRes = Some r}, Cmd.map SpeciesListMsg aCmd
         | LoadPlanets ->
             model, fetchDataFromResp model.Root.Value.Planets model.PlanetRes FetchPlanet FetchError
         | FetchPlanet r -> 
@@ -126,7 +126,7 @@ module State =
             let (a,aCmd) = VehicleList.State.update msg model.Vehicles
             model, Cmd.map VehicleListMsg aCmd
         | SpeciesListMsg msg ->
-            let (a,aCmd) = SpeciesList.State.update msg model.Specieses
+            let (a,aCmd) = SpeciesList.State.update msg model.Species
             model, Cmd.map SpeciesListMsg aCmd
         | PlanetListMsg msg ->
             let (a,aCmd) = PlanetList.State.update msg model.Planets
@@ -193,7 +193,7 @@ module View =
                             content = 
                                 View.StackLayout(
                                     children = [
-                                        SpeciesList.View.root model.Specieses (SpeciesListMsg >> dispatch)
+                                        SpeciesList.View.root model.Species (SpeciesListMsg >> dispatch)
                                         View.Button(text = "Fetch Species",command = (fun _ -> LoadSpecies |> dispatch))
                                     ]
                                 )

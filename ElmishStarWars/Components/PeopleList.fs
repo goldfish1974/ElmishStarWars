@@ -11,7 +11,7 @@ open Newtonsoft.Json
 module Types = 
     type Msg = 
         | PeopleSelectedItemChanged of int option
-        | SelectedPeople of People
+        | SelectedPerson of People
 
     type Model = People []
 
@@ -26,8 +26,8 @@ module State =
     let update msg (model: Model) = 
         match msg with 
         | PeopleSelectedItemChanged idx -> 
-            model, Cmd.ofMsg (SelectedPeople model.[idx.Value])
-        | SelectedPeople a -> 
+            model, Cmd.ofMsg (SelectedPerson model.[idx.Value])
+        | SelectedPerson a -> 
             model, Cmd.none
 
 module View =

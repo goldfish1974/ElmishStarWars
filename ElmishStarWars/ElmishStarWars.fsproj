@@ -30,6 +30,9 @@
     <Compile Include="Species.fs" />
     <Compile Include="Planet.fs" />
     <Compile Include="Films.fs" />
+    <Compile Include="SpeciesMore.fs" />
+    <Compile Include="Vehicles.fs" />
+    <Compile Include="Starships.fs" />
     <Compile Include="Types.fs" />
     <Compile Include="State.fs" />
     <Compile Include="ElmishStarWars.fs" />
