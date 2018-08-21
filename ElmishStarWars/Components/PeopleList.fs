@@ -25,8 +25,10 @@ module State =
 
     let update msg (model: Model) = 
         match msg with 
-        | PeopleSelectedItemChanged idx -> model, Cmd.ofMsg (SelectedPeople model.[idx.Value])
-        | SelectedPeople a -> model, Cmd.none
+        | PeopleSelectedItemChanged idx -> 
+            model, Cmd.ofMsg (SelectedPeople model.[idx.Value])
+        | SelectedPeople a -> 
+            model, Cmd.none
 
 module View =
     open Types

@@ -8,3 +8,4 @@ type Page =
     | VehiclePage
     | SpeciesPage
     | PlanetPage
+    | FilmsPage

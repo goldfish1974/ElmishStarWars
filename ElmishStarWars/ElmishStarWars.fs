@@ -20,12 +20,13 @@ module App =
             //Xamarin.Forms.Application.Current.MainPage.DisplayAlert("Clicked", sprintf "%A You clicked the button" page, "OK") |> ignore
             match page, pageModel with
             | ApplicationPage _ , ApplicationModel m -> Application.View.root m (ApplicationMsg >> dispatch)
-            | PeoplePage _, PeopleModel m -> People.View.root m (PeopleMsg >> dispatch)
+            | PeoplePage _, PeopleModel m -> Person.View.root m (PeopleMsg >> dispatch)
             | FilmPage _, FilmModel m -> Film.View.root m (FilmMsg >> dispatch)
             | StarshipPage _, StarshipModel m -> Starship.View.root m (StarshipMsg >> dispatch)
             | VehiclePage _, VehicleModel m -> Vehicle.View.root m (VehicleMsg >> dispatch)
             | SpeciesPage _, SpeciesModel m -> Species.View.root m (SpeciesMsg >> dispatch)
             | PlanetPage _, PlanetModel m -> Planet.View.root m (PlanetMsg >> dispatch)
+            | FilmsPage _, FilmsModel m -> Films.View.root m (FilmsMsg >> dispatch)
             | _, _ -> failwith "Wrong page model"
 
         View.NavigationPage(
