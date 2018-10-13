@@ -1,6 +1,6 @@
 ﻿module CommonViews
-    open Elmish.XamarinForms
-    open Elmish.XamarinForms.DynamicViews
+    open Fabulous.Core
+    open Fabulous.DynamicViews
     open Xamarin.Forms
     let loadingView (msg : string) =
         View.ContentView(

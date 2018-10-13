@@ -1,6 +1,6 @@
 ﻿namespace Vehicles
-open Elmish.XamarinForms
-open Elmish.XamarinForms.DynamicViews
+open Fabulous.Core
+open Fabulous.DynamicViews
 open Xamarin.Forms
 open SWApi
 
