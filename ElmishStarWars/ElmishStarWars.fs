@@ -2,8 +2,8 @@
 namespace ElmishStarWars
 
 open System.Diagnostics
-open Elmish.XamarinForms
-open Elmish.XamarinForms.DynamicViews
+open Fabulous.Core
+open Fabulous.DynamicViews
 open Xamarin.Forms
 open RestSharp
 open Newtonsoft.Json

@@ -2,8 +2,8 @@
 
 open Global
 open Types
-open Elmish.XamarinForms
-open Elmish.XamarinForms.DynamicViews
+open Fabulous.Core
+open Fabulous.DynamicViews
 
 let init () = 
     let (a, aCmd) = Application.State.init()
